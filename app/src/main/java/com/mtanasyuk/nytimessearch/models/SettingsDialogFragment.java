@@ -114,7 +114,6 @@ public class SettingsDialogFragment extends DialogFragment implements DatePicker
         c.set(Calendar.YEAR, year);
         c.set(Calendar.MONTH, monthOfYear);
         c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-        c.add(Calendar.DATE, 1);
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
         String formatted = format.format(c.getTime());
         mEditText.setText(formatted);
