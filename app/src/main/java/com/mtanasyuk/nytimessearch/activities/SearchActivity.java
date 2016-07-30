@@ -24,6 +24,7 @@ import com.mtanasyuk.nytimessearch.R;
 import com.mtanasyuk.nytimessearch.adapters.ArticleArrayAdapter;
 import com.mtanasyuk.nytimessearch.models.Article;
 import com.mtanasyuk.nytimessearch.models.EndlessScrollListener;
+import com.mtanasyuk.nytimessearch.models.Filter;
 import com.mtanasyuk.nytimessearch.models.SettingsDialogFragment;
 
 import org.json.JSONArray;
@@ -34,15 +35,14 @@ import java.util.ArrayList;
 
 import cz.msebera.android.httpclient.Header;
 
-public class SearchActivity extends AppCompatActivity {
+public class SearchActivity extends AppCompatActivity implements SettingsDialogFragment.SettingsDialogListener {
 
-//    EditText etQuery;
     GridView gvResults;
-//    Button btnSearch;
-
     final String apiKey = "6474c108b83f4af39476a770330f53b2";
     final String url = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
     String query;
+    Filter filter;
+    SearchView searchView;
 
     ArrayList<Article> articles;
     ArticleArrayAdapter adapter;
@@ -55,10 +55,7 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     public void setupViews() {
-//        etQuery = (EditText) findViewById(R.id.etQuery);
         gvResults = (GridView) findViewById(R.id.gvResults);
-//        gvResults.setNestedScrollingEnabled(true);
-//        btnSearch = (Button) findViewById(R.id.btnSearch);
         articles = new ArrayList<>();
         adapter = new ArticleArrayAdapter(this, articles);
         gvResults.setAdapter(adapter);
@@ -67,13 +64,9 @@ public class SearchActivity extends AppCompatActivity {
         gvResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // create an intent to display an article
                 Intent i = new Intent(getApplicationContext(), ArticleActivity.class);
-                // get the article to display
                 Article article = articles.get(position);
-                // pass in that article into intent
                 i.putExtra("article", article);
-                // launch the activity
                 startActivity(i);
             }
         });
@@ -83,7 +76,7 @@ public class SearchActivity extends AppCompatActivity {
             public boolean onLoadMore(int page, int totalItemsCount) {
                 // Triggered only when new data needs to be appended to the list
                 // Add whatever code is needed to append new items to your AdapterView
-                fetchArticlesAsync(page, "", "", "");
+                fetchArticlesAsync(page);
                 return true; // ONLY if more data is actually being loaded; false otherwise.
             }
         });
@@ -96,13 +89,13 @@ public class SearchActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_search, menu);
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
-        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-//        searchItem.expandActionView();
-//        searchView.requestFocus();
+        searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+//        searchView.setBackgroundColor(3);
+        searchItem.expandActionView();
+        searchView.requestFocus();
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -112,11 +105,11 @@ public class SearchActivity extends AppCompatActivity {
             }
 
             public boolean onQueryTextSubmit(String searchQuery) {
-                // get the value "query" which is entered in the search box
+                // in some cases text submit fires several times
+                searchView.clearFocus();
                 adapter.clear();
                 query = searchQuery;
-                fetchArticlesAsync(0, "", "", "");
-//                searchView.clearFocus();
+                fetchArticlesAsync(0);
                 return true;
             }
         });
@@ -129,38 +122,59 @@ public class SearchActivity extends AppCompatActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//        switch(id) {
-//            case R.id.action_search:
-//                break;
-//            case R.id.action_settings:
-//                break;
-//        }
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            FragmentManager fm = getSupportFragmentManager();
+            SettingsDialogFragment settingDialog = SettingsDialogFragment.newInstance("Set the filters:");
+            settingDialog.show(fm, "fragment_settings");
+        }
         return super.onOptionsItemSelected(item);
     }
 
-//    public void onArticleSearch(View view) {
-//        // clear up the adapter for the fresh search and send a request
-//        adapter.clear();
-//        fetchArticlesAsync(0, "", "", "");
-//    }
+    @Override
+    public void onFinishEditDialog(Filter filterReturned) {
+        filter = filterReturned;
+        searchView.setQuery("", false);
+        query = null;
+//        Toast.makeText(this, "Hi, " + filter.isArts(), Toast.LENGTH_SHORT).show();
+        adapter.clear();
 
-    public void fetchArticlesAsync(int page, String queryCategory, String date, String sort) {
+        fetchArticlesAsync(0);
+    }
+
+    public void fetchArticlesAsync(int page) {
 
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
-//        String query = etQuery.getText().toString();
-        params.put("q", query);
-//        params.put("fq", queryCategory);
-//        params.put("begin_date", date);
-//        params.put("sort", sort);
+        if (query != null) {
+            if (!query.isEmpty()) params.put("q", query);
+        }
+        if (filter != null) {
+            if (!filter.getDate().isEmpty()) params.put("begin_date", filter.getDate());
+            if (!filter.getSort().isEmpty()) params.put("sort", filter.getSort());
+            if (filter.isArts() && filter.isFashion() && filter.isSports() ) {
+                params.put("fq", "news_desk:("+ '"' + "Arts" + '"' + " " + '"' + "Fashion & Style" + '"' + " " + '"' + "Sports" + '"' + ")");
+            } else if (filter.isArts() && filter.isFashion()) {
+                params.put("fq", "news_desk:("+ '"' + "Arts" + '"' + " " + '"' + "Fashion & Style" + '"' + ")");
+            } else if (filter.isArts() && filter.isSports()) {
+                params.put("fq", "news_desk:("+ '"' + "Arts" + '"' + " " + '"' + "Sports" + '"' + ")");
+            } else if (filter.isFashion() && filter.isSports()) {
+                params.put("fq", "news_desk:("+ '"' + "Fashion & Style" + '"' + " " + '"' + "Sports" + '"' + ")");
+            } else if (filter.isArts()) {
+                params.put("fq", "news_desk:(" + '"' + "Arts" + '"' + ")");
+            } else if (filter.isFashion()) {
+                params.put("fq", "news_desk:("+ '"' + "Fashion & Style" + '"' + ")");
+            } else if (filter.isSports()) {
+                params.put("fq", "news_desk:("+ '"' + "Sports" + '"' + ")");
+            }
+        }
         params.put("api-key", apiKey);
         params.put("page", page);
+        Log.d("DEBUG", params.toString());
         if (isNetworkAvailable()) {
             client.get(url, params, new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                    Log.d("DEBUG", response.toString());
                     JSONArray articleJSONResults = null;
                     try {
                         articleJSONResults = response.getJSONObject("response").getJSONArray("docs");
@@ -179,12 +193,5 @@ public class SearchActivity extends AppCompatActivity {
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
-    }
-
-
-    public void showEditDialog(MenuItem item) {
-        FragmentManager fm = getSupportFragmentManager();
-        SettingsDialogFragment settingDialogFragment = SettingsDialogFragment.newInstance("Some Title");
-        settingDialogFragment.show(fm, "fragment_edit_name");
     }
 }

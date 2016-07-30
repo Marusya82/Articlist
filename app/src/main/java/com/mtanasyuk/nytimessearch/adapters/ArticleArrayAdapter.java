@@ -43,7 +43,7 @@ public class ArticleArrayAdapter extends ArrayAdapter<Article> {
         String thumbnail = article.getThumbNail();
         if (!TextUtils.isEmpty(thumbnail)) {
             // remote download the image in the background
-            Picasso.with(getContext()).load(thumbnail).into(imageView);
+            Picasso.with(getContext()).load(thumbnail).fit().into(imageView);
         }
 
         return convertView;

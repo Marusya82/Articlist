@@ -4,5 +4,10 @@
     <string name="hint">Enter search query</string>
     <string name="search">Search</string>
     <string name="action_search">Search an article</string>
-    <string name="pick_date">Pick a begin date</string>
+    <string name="sort">Sort</string>
+    <string name="arts">Arts</string>
+    <string name="fashion_style">Fashion and Style</string>
+    <string name="sports">Sports</string>
+    <string name="save">Save filters</string>
+    <string name="pick_date">Select the date</string>
 </resources>

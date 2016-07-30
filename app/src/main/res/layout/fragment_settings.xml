@@ -6,12 +6,6 @@
     android:layout_gravity="center"
     android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/lbl_your_name"
-        android:text=""
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
     <EditText
         android:id="@+id/txt_your_name"
         android:layout_width="match_parent"
@@ -19,16 +13,40 @@
         android:inputType="text"
         android:imeOptions="actionDone" />
 
-    <TextView
-        android:id="@+id/datePick"
-        android:text="@string/pick_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <EditText
+    <Button
+        style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="text"
-        android:onClick="showDatePickerDialog"/>
+        android:text="@string/pick_date"
+        android:id="@+id/btnDatePicker" />
+
+    <Spinner
+        android:id="@+id/mySpinner"
+        android:layout_width="wrap_content"
+        android:entries="@array/choices_array"
+        android:prompt="@string/sort"
+        android:layout_height="wrap_content" />
+
+    <CheckBox android:id="@+id/checkbox_arts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/arts" />
+
+    <CheckBox android:id="@+id/checkbox_fashion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/fashion_style" />
+
+    <CheckBox android:id="@+id/checkbox_sports"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sports" />
+
+    <Button
+        android:id="@+id/btnSaveFilters"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/save" />
 
 </LinearLayout>
