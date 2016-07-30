@@ -1,13 +1,14 @@
 <resources>
     <string name="app_name">Articlist</string>
-    <string name="action_settings">Settings</string>
-    <string name="hint">Enter search query</string>
+    <string name="action_settings">Set filters</string>
     <string name="search">Search</string>
-    <string name="action_search">Search an article</string>
     <string name="sort">Sort</string>
     <string name="arts">Arts</string>
     <string name="fashion_style">Fashion and Style</string>
     <string name="sports">Sports</string>
-    <string name="save">Save filters</string>
-    <string name="pick_date">Select the date</string>
+    <string name="save">Save</string>
+    <string name="pick_date">Begin date</string>
 </resources>
+
+<!--<string name="hint">Enter search query</string>-->
+<!--<string name="action_search">Search an article</string>-->

@@ -22,8 +22,7 @@ import java.util.Calendar;
 
 public class SettingsDialogFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
-    EditText mEditText;
-    Button btnDatePicker;
+    EditText etSetDate;
     Button btnSaveFilters;
     Spinner spinner;
     CheckBox checkArts;
@@ -59,17 +58,17 @@ public class SettingsDialogFragment extends DialogFragment implements DatePicker
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         // Get field from view
-        mEditText = (EditText) view.findViewById(R.id.txt_your_name);
+        etSetDate = (EditText) view.findViewById(R.id.pick_date);
         // Fetch arguments from bundle and set title
         String title = getArguments().getString("title", "Enter Name");
         getDialog().setTitle(title);
-        mEditText.requestFocus();
+        etSetDate.requestFocus();
         // Show soft keyboard automatically and request focus to field
         getDialog().getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
 
-        btnDatePicker = (Button) view.findViewById(R.id.btnDatePicker);
-        btnDatePicker.setOnClickListener(new View.OnClickListener() {
+//        btnDatePicker = (Button) view.findViewById(R.id.btnDatePicker);
+        etSetDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showDatePicker();
@@ -84,7 +83,7 @@ public class SettingsDialogFragment extends DialogFragment implements DatePicker
         btnSaveFilters.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String date = mEditText.getText().toString();
+                String date = etSetDate.getText().toString();
                 String value = spinner.getSelectedItem().toString();
                 boolean isArts = checkArts.isChecked();
                 boolean isFashion = checkFashion.isChecked();
@@ -116,6 +115,6 @@ public class SettingsDialogFragment extends DialogFragment implements DatePicker
         c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
         String formatted = format.format(c.getTime());
-        mEditText.setText(formatted);
+        etSetDate.setText(formatted);
     }
 }

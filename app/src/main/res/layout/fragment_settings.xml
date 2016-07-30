@@ -7,18 +7,12 @@
     android:orientation="vertical" >
 
     <EditText
-        android:id="@+id/txt_your_name"
+        android:id="@+id/pick_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:hint="@string/pick_date"
         android:inputType="text"
         android:imeOptions="actionDone" />
-
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/pick_date"
-        android:id="@+id/btnDatePicker" />
 
     <Spinner
         android:id="@+id/mySpinner"
@@ -27,17 +21,20 @@
         android:prompt="@string/sort"
         android:layout_height="wrap_content" />
 
-    <CheckBox android:id="@+id/checkbox_arts"
+    <CheckBox
+        android:id="@+id/checkbox_arts"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/arts" />
 
-    <CheckBox android:id="@+id/checkbox_fashion"
+    <CheckBox
+        android:id="@+id/checkbox_fashion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/fashion_style" />
 
-    <CheckBox android:id="@+id/checkbox_sports"
+    <CheckBox
+        android:id="@+id/checkbox_sports"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/sports" />
