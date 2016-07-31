@@ -14,14 +14,17 @@
         <activity
             android:name=".activities.SearchActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.ArticleActivity"></activity>
+        <activity
+            android:name=".activities.ArticleActivity"
+            android:parentActivityName=".activities.SearchActivity" >
+        </activity>
     </application>
 
 </manifest>

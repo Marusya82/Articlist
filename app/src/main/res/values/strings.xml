@@ -2,13 +2,13 @@
     <string name="app_name">Articlist</string>
     <string name="action_settings">Set filters</string>
     <string name="search">Search</string>
+    <string name="share">Share an article</string>
     <string name="sort">Sort</string>
     <string name="arts">Arts</string>
+    <string name="loading">Loading…</string>
     <string name="fashion_style">Fashion and Style</string>
     <string name="sports">Sports</string>
     <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
     <string name="pick_date">Begin date</string>
 </resources>
-
-<!--<string name="hint">Enter search query</string>-->
-<!--<string name="action_search">Search an article</string>-->

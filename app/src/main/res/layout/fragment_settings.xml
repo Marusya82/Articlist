@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:hint="@string/pick_date"
         android:inputType="text"
+        android:textSize="12sp"
         android:imeOptions="actionDone" />
 
     <Spinner
@@ -19,18 +20,21 @@
         android:layout_width="wrap_content"
         android:entries="@array/choices_array"
         android:prompt="@string/sort"
+        android:textSize="12sp"
         android:layout_height="wrap_content" />
 
     <CheckBox
         android:id="@+id/checkbox_arts"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="12sp"
         android:text="@string/arts" />
 
     <CheckBox
         android:id="@+id/checkbox_fashion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="12sp"
         android:text="@string/fashion_style" />
 
     <CheckBox
@@ -41,9 +45,20 @@
 
     <Button
         android:id="@+id/btnSaveFilters"
+        android:layout_gravity="center_horizontal"
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="12sp"
         android:text="@string/save" />
+
+    <Button
+        android:id="@+id/btnCancel"
+        android:layout_gravity="center_horizontal"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:text="@string/cancel" />
 
 </LinearLayout>

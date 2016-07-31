@@ -21,20 +21,22 @@ import com.mtanasyuk.nytimessearch.models.Filter;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
 public class SettingsDialogFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
-    EditText etSetDate;
-    Button btnSaveFilters;
-    Spinner spinner;
-    CheckBox checkArts;
-    CheckBox checkFashion;
-    CheckBox checkSports;
+    @BindView(R.id.pick_date) EditText etSetDate;
+    @BindView(R.id.mySpinner) Spinner spinner;
+    @BindView(R.id.checkbox_arts) CheckBox checkArts;
+    @BindView(R.id.checkbox_fashion) CheckBox checkFashion;
+    @BindView(R.id.checkbox_sports) CheckBox checkSports;
+    @BindView(R.id.btnSaveFilters) Button btnSaveFilters;
+    @BindView(R.id.btnCancel) Button btnCancel;
+    private Unbinder unbinder;
 
-    public SettingsDialogFragment() {
-        // Empty constructor is required for DialogFragment
-        // Make sure not to add arguments to the constructor
-        // Use `newInstance` instead as shown below
-    }
+    public SettingsDialogFragment() {}
 
     public static SettingsDialogFragment newInstance(String title) {
         SettingsDialogFragment frag = new SettingsDialogFragment();
@@ -52,23 +54,23 @@ public class SettingsDialogFragment extends DialogFragment implements DatePicker
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_settings, container);
+        View view = inflater.inflate(R.layout.fragment_settings, container, false);
+        unbinder = ButterKnife.bind(this, view);
+        return view;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        // Get field from view
-        etSetDate = (EditText) view.findViewById(R.id.pick_date);
-        // Fetch arguments from bundle and set title
+
+
         String title = getArguments().getString("title", "Enter Name");
         getDialog().setTitle(title);
+
         etSetDate.requestFocus();
         // Show soft keyboard automatically and request focus to field
         getDialog().getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-
-//        btnDatePicker = (Button) view.findViewById(R.id.btnDatePicker);
         etSetDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,11 +78,7 @@ public class SettingsDialogFragment extends DialogFragment implements DatePicker
             }
         });
 
-        spinner = (Spinner) view.findViewById(R.id.mySpinner);
-        checkArts = (CheckBox) view.findViewById(R.id.checkbox_arts);
-        checkFashion = (CheckBox) view.findViewById(R.id.checkbox_fashion);
-        checkSports = (CheckBox) view.findViewById(R.id.checkbox_sports);
-        btnSaveFilters = (Button) view.findViewById(R.id.btnSaveFilters);
+
         btnSaveFilters.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,7 +90,13 @@ public class SettingsDialogFragment extends DialogFragment implements DatePicker
                 Filter filter = new Filter(date, isArts, isFashion, isSports, value);
                 SettingsDialogListener listener = (SettingsDialogListener) getActivity();
                 listener.onFinishEditDialog(filter);
-                // Close the dialog and return back to the parent activity
+                dismiss();
+            }
+        });
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 dismiss();
             }
         });
@@ -117,5 +121,11 @@ public class SettingsDialogFragment extends DialogFragment implements DatePicker
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
         String formatted = format.format(c.getTime());
         etSetDate.setText(formatted);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 }
