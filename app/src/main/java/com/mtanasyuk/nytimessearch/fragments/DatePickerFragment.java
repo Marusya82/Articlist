@@ -1,4 +1,4 @@
-package com.mtanasyuk.nytimessearch.models;
+package com.mtanasyuk.nytimessearch.fragments;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;

@@ -8,24 +8,25 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.GridView;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.mtanasyuk.nytimessearch.R;
-import com.mtanasyuk.nytimessearch.adapters.ArticleArrayAdapter;
+import com.mtanasyuk.nytimessearch.adapters.ArticlesRecycleViewAdapter;
 import com.mtanasyuk.nytimessearch.models.Article;
 import com.mtanasyuk.nytimessearch.models.EndlessScrollListener;
 import com.mtanasyuk.nytimessearch.models.Filter;
-import com.mtanasyuk.nytimessearch.models.SettingsDialogFragment;
+import com.mtanasyuk.nytimessearch.models.ItemClickSupport;
+import com.mtanasyuk.nytimessearch.fragments.SettingsDialogFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,7 +38,6 @@ import cz.msebera.android.httpclient.Header;
 
 public class SearchActivity extends AppCompatActivity implements SettingsDialogFragment.SettingsDialogListener {
 
-    GridView gvResults;
     final String apiKey = "6474c108b83f4af39476a770330f53b2";
     final String url = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
     String query;
@@ -45,7 +45,7 @@ public class SearchActivity extends AppCompatActivity implements SettingsDialogF
     SearchView searchView;
 
     ArrayList<Article> articles;
-    ArticleArrayAdapter adapter;
+    ArticlesRecycleViewAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,29 +55,35 @@ public class SearchActivity extends AppCompatActivity implements SettingsDialogF
     }
 
     public void setupViews() {
-        gvResults = (GridView) findViewById(R.id.gvResults);
         articles = new ArrayList<>();
-        adapter = new ArticleArrayAdapter(this, articles);
-        gvResults.setAdapter(adapter);
+        adapter = new ArticlesRecycleViewAdapter(this, articles);
+        RecyclerView rvArticles = (RecyclerView) findViewById(R.id.rvArticles);
+        assert rvArticles != null;
+        rvArticles.setAdapter(adapter);
 
-        // hook up listener for grid click
-        gvResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent i = new Intent(getApplicationContext(), ArticleActivity.class);
-                Article article = articles.get(position);
-                i.putExtra("article", article);
-                startActivity(i);
-            }
-        });
+        StaggeredGridLayoutManager gridLayoutManager =
+                new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL);
+        rvArticles.setLayoutManager(gridLayoutManager);
 
-        gvResults.setOnScrollListener(new EndlessScrollListener() {
+        // hook up listener with a decorator
+        ItemClickSupport.addTo(rvArticles).setOnItemClickListener(
+                new ItemClickSupport.OnItemClickListener() {
+                    @Override
+                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                        Intent i = new Intent(getApplicationContext(), ArticleActivity.class);
+                        Article article = articles.get(position);
+                        i.putExtra("article", article);
+                        startActivity(i);
+                    }
+                }
+        );
+
+        rvArticles.addOnScrollListener(new EndlessScrollListener(gridLayoutManager) {
             @Override
-            public boolean onLoadMore(int page, int totalItemsCount) {
+            public void onLoadMore(int page, int totalItemsCount) {
                 // Triggered only when new data needs to be appended to the list
                 // Add whatever code is needed to append new items to your AdapterView
                 fetchArticlesAsync(page);
-                return true; // ONLY if more data is actually being loaded; false otherwise.
             }
         });
 
@@ -107,7 +113,10 @@ public class SearchActivity extends AppCompatActivity implements SettingsDialogF
             public boolean onQueryTextSubmit(String searchQuery) {
                 // in some cases text submit fires several times
                 searchView.clearFocus();
-                adapter.clear();
+                articles.clear();
+                int curSize = adapter.getItemCount();
+                adapter.notifyItemRangeRemoved(0, curSize);
+                adapter.notifyDataSetChanged();
                 query = searchQuery;
                 fetchArticlesAsync(0);
                 return true;
@@ -137,8 +146,10 @@ public class SearchActivity extends AppCompatActivity implements SettingsDialogF
         searchView.setQuery("", false);
         query = null;
 //        Toast.makeText(this, "Hi, " + filter.isArts(), Toast.LENGTH_SHORT).show();
-        adapter.clear();
-
+        articles.clear();
+        int curSize = adapter.getItemCount();
+        adapter.notifyItemRangeRemoved(0, curSize);
+        adapter.notifyDataSetChanged();
         fetchArticlesAsync(0);
     }
 
@@ -178,7 +189,12 @@ public class SearchActivity extends AppCompatActivity implements SettingsDialogF
                     JSONArray articleJSONResults = null;
                     try {
                         articleJSONResults = response.getJSONObject("response").getJSONArray("docs");
-                        adapter.addAll(Article.fromJSONArray(articleJSONResults));
+                        int curSize = adapter.getItemCount();
+                        ArrayList<Article> newItems = Article.fromJSONArray(articleJSONResults);
+                        articles.addAll(newItems);
+                        // curSize should represent the first element that got added
+                        // newItems.size() represents the itemCount
+                        adapter.notifyItemRangeInserted(curSize, articles.size() - 1);
                         Log.d("DEBUG", articles.toString());
                     } catch (JSONException e) {
                         e.printStackTrace();

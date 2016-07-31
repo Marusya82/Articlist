@@ -1,4 +1,4 @@
-package com.mtanasyuk.nytimessearch.models;
+package com.mtanasyuk.nytimessearch.fragments;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.mtanasyuk.nytimessearch.R;
+import com.mtanasyuk.nytimessearch.models.Filter;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
