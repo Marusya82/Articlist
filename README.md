@@ -46,7 +46,7 @@ The following **additional** features are implemented:
 #### Video Walkthrough
 
 Here's a walkthrough of implemented user stories:
-![Alt Text](https://github.com/Marusya82/Articlist/blob/master/Articlist_demo.gif)
+![Alt Text](https://github.com/Marusya82/Articlist/blob/master/Articlist_final_demo.gif)
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
