@@ -24,7 +24,7 @@ The following **optional** features are implemented:
 * [x] Used the **ActionBar SearchView** or custom layout as the query box instead of an EditText
 * [x] User can **share an article link** to their friends or email it to themselves
 * [x] Replaced Filter Settings Activity with a lightweight modal overlay
-* [x] Improved the user interface and experiment with image assets and/or styling and coloring: toolbar hides as the user scrolls in all activities; different theme of a toolbar; the up button is implemented; progress bar is implemented; gradient; 
+* [x] Improved the user interface and experiment with image assets and/or styling and coloring: toolbar hides as the user scrolls in all activities; different theme of a toolbar; the up button is implemented; progress bar is implemented for all activities; gradient; 
 
 The following **bonus** features are implemented:
 
