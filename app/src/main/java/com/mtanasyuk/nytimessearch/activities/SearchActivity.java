@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -14,7 +15,6 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ProgressBar;
 
 import com.loopj.android.http.AsyncHttpClient;
@@ -63,25 +63,22 @@ public class SearchActivity extends AppCompatActivity implements SettingsDialogF
 
     public void setupViews() {
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+//        getSupportActionBar().setDisplayShowTitleEnabled(false);
         articles = new ArrayList<>();
         adapter = new ArticlesRecycleViewAdapter(articles);
         rvArticles.setAdapter(adapter);
 
         StaggeredGridLayoutManager gridLayoutManager =
-                new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL);
+                new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
         rvArticles.setLayoutManager(gridLayoutManager);
 
         // hook up listener with a decorator
         ItemClickSupport.addTo(rvArticles).setOnItemClickListener(
-                new ItemClickSupport.OnItemClickListener() {
-                    @Override
-                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                        Intent i = new Intent(getApplicationContext(), ArticleActivity.class);
-                        Article article = articles.get(position);
-                        i.putExtra("article", article);
-                        startActivity(i);
-                    }
+                (recyclerView, position, v) -> {
+                    Intent i = new Intent(getApplicationContext(), ArticleActivity.class);
+                    Article article = articles.get(position);
+                    i.putExtra("article", article);
+                    startActivity(i);
                 }
         );
 
@@ -98,7 +95,6 @@ public class SearchActivity extends AppCompatActivity implements SettingsDialogF
         getMenuInflater().inflate(R.menu.menu_search, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
         searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        searchItem.expandActionView();
         searchView.requestFocus();
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -128,7 +124,7 @@ public class SearchActivity extends AppCompatActivity implements SettingsDialogF
         int id = item.getItemId();
         if (id == R.id.action_settings) {
             FragmentManager fm = getSupportFragmentManager();
-            SettingsDialogFragment settingDialog = SettingsDialogFragment.newInstance("Set the filters:");
+            SettingsDialogFragment settingDialog = SettingsDialogFragment.newInstance("Select advanced filters:");
             settingDialog.show(fm, "fragment_settings");
         }
         return super.onOptionsItemSelected(item);
@@ -151,6 +147,7 @@ public class SearchActivity extends AppCompatActivity implements SettingsDialogF
 
     @Override
     public void onFinishEditDialog(Filter filterReturned) {
+        Snackbar.make(findViewById(android.R.id.content), R.string.applied, Snackbar.LENGTH_LONG).show();
         filter = filterReturned;
         searchView.setQuery("", false);
         query = null;
@@ -205,9 +202,18 @@ public class SearchActivity extends AppCompatActivity implements SettingsDialogF
                         hideProgressBar();
                     } catch (JSONException e) {
                         e.printStackTrace();
+                        Snackbar.make(findViewById(android.R.id.content), R.string.wrong, Snackbar.LENGTH_INDEFINITE).show();
                     }
                 }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                    super.onFailure(statusCode, headers, responseString, throwable);
+                    Snackbar.make(findViewById(android.R.id.content), R.string.wrong, Snackbar.LENGTH_INDEFINITE).show();
+                }
             });
+        } else {
+            Snackbar.make(findViewById(android.R.id.content), R.string.no_internet, Snackbar.LENGTH_INDEFINITE).show();
         }
     }
 

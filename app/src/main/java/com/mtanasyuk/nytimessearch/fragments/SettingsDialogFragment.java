@@ -3,17 +3,20 @@ package com.mtanasyuk.nytimessearch.fragments;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.mtanasyuk.nytimessearch.R;
 import com.mtanasyuk.nytimessearch.models.Filter;
@@ -34,15 +37,18 @@ public class SettingsDialogFragment extends DialogFragment implements DatePicker
     @BindView(R.id.checkbox_sports) CheckBox checkSports;
     @BindView(R.id.btnSaveFilters) Button btnSaveFilters;
     @BindView(R.id.btnCancel) Button btnCancel;
+    @BindView(R.id.tvBeginDate) TextView tvBeginDate;
+    @BindView(R.id.sort_order) TextView tvSortOrder;
+    @BindView(R.id.news_desk) TextView tvNewsDesk;
+
+
     private Unbinder unbinder;
+    String dateToSend;
 
     public SettingsDialogFragment() {}
 
     public static SettingsDialogFragment newInstance(String title) {
         SettingsDialogFragment frag = new SettingsDialogFragment();
-        Bundle args = new Bundle();
-        args.putString("title", title);
-        frag.setArguments(args);
         return frag;
     }
 
@@ -54,7 +60,7 @@ public class SettingsDialogFragment extends DialogFragment implements DatePicker
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_settings, container, false);
+        View view = inflater.inflate(R.layout.settings_layout, container, false);
         unbinder = ButterKnife.bind(this, view);
         return view;
     }
@@ -63,43 +69,30 @@ public class SettingsDialogFragment extends DialogFragment implements DatePicker
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-
-        String title = getArguments().getString("title", "Enter Name");
-        getDialog().setTitle(title);
+        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         etSetDate.requestFocus();
         // Show soft keyboard automatically and request focus to field
         getDialog().getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-        etSetDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDatePicker();
-            }
-        });
+        etSetDate.setOnClickListener(v -> showDatePicker());
 
 
-        btnSaveFilters.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String date = etSetDate.getText().toString();
-                String value = spinner.getSelectedItem().toString();
-                boolean isArts = checkArts.isChecked();
-                boolean isFashion = checkFashion.isChecked();
-                boolean isSports = checkSports.isChecked();
-                Filter filter = new Filter(date, isArts, isFashion, isSports, value);
-                SettingsDialogListener listener = (SettingsDialogListener) getActivity();
-                listener.onFinishEditDialog(filter);
-                dismiss();
-            }
+        btnSaveFilters.setOnClickListener(v -> {
+            String date = etSetDate.getText().toString();
+            if (date.isEmpty()) dateToSend = "";
+            boolean isArts = checkArts.isChecked();
+            boolean isFashion = checkFashion.isChecked();
+            boolean isSports = checkSports.isChecked();
+            String value = spinner.getSelectedItem().toString();
+            Filter filter = new Filter(dateToSend, isArts, isFashion, isSports, value);
+            SettingsDialogListener listener = (SettingsDialogListener) getActivity();
+            Snackbar.make(view, R.string.applied, Snackbar.LENGTH_INDEFINITE).show();
+            listener.onFinishEditDialog(filter);
+            dismiss();
         });
 
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismiss();
-            }
-        });
+        btnCancel.setOnClickListener(v -> dismiss());
     }
 
     // attach to an onclick handler to show the date picker
@@ -118,9 +111,10 @@ public class SettingsDialogFragment extends DialogFragment implements DatePicker
         c.set(Calendar.YEAR, year);
         c.set(Calendar.MONTH, monthOfYear);
         c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
-        String formatted = format.format(c.getTime());
-        etSetDate.setText(formatted);
+        SimpleDateFormat str = new SimpleDateFormat("yyyyMMdd");
+        dateToSend = str.format(c.getTime());
+        SimpleDateFormat dateToShow = new SimpleDateFormat("dd-MM-yyyy");
+        etSetDate.setText(dateToShow.format(c.getTime()));
     }
 
     @Override

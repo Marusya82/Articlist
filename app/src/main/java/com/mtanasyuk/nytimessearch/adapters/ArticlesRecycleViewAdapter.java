@@ -7,11 +7,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.mtanasyuk.nytimessearch.R;
 import com.mtanasyuk.nytimessearch.models.Article;
 import com.mtanasyuk.nytimessearch.models.ViewHolderImage;
 import com.mtanasyuk.nytimessearch.models.ViewHolderText;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -60,7 +60,7 @@ public class ArticlesRecycleViewAdapter extends RecyclerView.Adapter<RecyclerVie
             ImageView imageView = vh1.getImageView();
             imageView.setImageResource(0);
             String thumbnail = article.getThumbNail();
-            Picasso.with(context).load(thumbnail).fit().into(imageView);
+            Glide.with(context).load(thumbnail).into(imageView);
             vh1.getTitle().setText(article.getHeadline());
         }
     }

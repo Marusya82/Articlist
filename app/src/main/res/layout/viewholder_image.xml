@@ -4,8 +4,8 @@
     android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:padding="4dp"
-    android:gravity="center_horizontal">
+    android:layout_gravity="center"
+    android:background="@drawable/gradient_shape" >
 
     <ImageView
         android:id="@+id/ivImage"
@@ -18,11 +18,10 @@
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="10dp"
-        android:textColor="@color/black"
+        android:gravity="center_horizontal"
+        android:textAllCaps="true"
+        android:textSize="11sp"
+        android:textColor="@color/white"
         tools:text="TextView"/>
-
-    <!--android:maxLines="2"-->
-    <!--android:ellipsize="end"-->
 
 </LinearLayout>

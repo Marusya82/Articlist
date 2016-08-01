@@ -13,7 +13,7 @@
     <item
         android:id="@+id/miActionProgressArticle"
         android:title="@string/loading"
-        android:visible="true"
+        android:visible="false"
         android:orderInCategory="50"
         app:showAsAction="always"
         app:actionLayout="@layout/action_view_progress" />

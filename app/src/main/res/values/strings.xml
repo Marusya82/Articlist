@@ -1,14 +1,19 @@
 <resources>
     <string name="app_name">Articlist</string>
-    <string name="action_settings">Set filters</string>
+    <string name="action_settings">Advanced filters</string>
     <string name="search">Search</string>
     <string name="share">Share an article</string>
-    <string name="sort">Sort</string>
+    <string name="sort">Sort order:</string>
     <string name="arts">Arts</string>
     <string name="loading">Loading…</string>
     <string name="fashion_style">Fashion and Style</string>
     <string name="sports">Sports</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
-    <string name="pick_date">Begin date</string>
+    <string name="pick_date">Begin date:</string>
+    <string name="no_internet">Internet is not available at this time</string>
+    <string name="wrong">Something went wrong, please try again</string>
+    <string name="applied">New filters were applied</string>
+    <string name="click_here">click to select</string>
+    <string name="news_desk">News desk:</string>
 </resources>

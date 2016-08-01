@@ -1,6 +1,7 @@
 package com.mtanasyuk.nytimessearch.activities;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -24,6 +25,8 @@ public class ArticleActivity extends AppCompatActivity {
     @BindView(R.id.toolbarDetail) Toolbar toolbar;
 
     MenuItem miActionProgressItemArticle;
+    boolean loadingFinished = true;
+    boolean redirect = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,9 +43,34 @@ public class ArticleActivity extends AppCompatActivity {
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                if (!loadingFinished) {
+                    redirect = true;
+                }
+                loadingFinished = false;
                 view.loadUrl(url);
                 return true;
             }
+
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap facIcon) {
+                loadingFinished = false;
+                showProgressBar();
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                if(!redirect){
+                    loadingFinished = true;
+                }
+
+                if(loadingFinished && !redirect){
+                    hideProgressBar();
+                } else {
+                    redirect = false;
+                }
+
+            }
+
         });
         webView.loadUrl(article.getWebURL());
     }
